@@ -15,11 +15,10 @@ public class Customer {
     private String lastName;
     private String email;
 
-    protected Customer() {}
-
-    public Customer(String firstName, String lastName) {
+    public Customer(String firstName, String lastName, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
+        this.email = email;
     }
 
     @Override
@@ -43,10 +42,6 @@ public class Customer {
 
     public String getEmail() {
         return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
 }

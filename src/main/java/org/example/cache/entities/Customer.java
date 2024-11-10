@@ -4,15 +4,25 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 public class Customer {
 
+
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Getter
     private Long id;
+    @Setter
+    @Getter
     private String firstName;
+    @Setter
+    @Getter
     private String lastName;
+    @Setter
+    @Getter
     private String email;
 
     public Customer(String firstName, String lastName, String email) {
@@ -27,25 +37,12 @@ public class Customer {
 
     @Override
     public String toString() {
-        return String.format(
-            "Customer[id=%d, firstName='%s', lastName='%s']",
-            id, firstName, lastName);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getEmail() {
-        return email;
+        return "Customer{" +
+            "id=" + id +
+            ", firstName='" + firstName + '\'' +
+            ", lastName='" + lastName + '\'' +
+            ", email='" + email + '\'' +
+            '}';
     }
 
 }

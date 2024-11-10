@@ -20,7 +20,7 @@ public class CustomerRepoTest {
     CustomerRepository repo;
 
     @Test
-    @DisplayName("test1")
+    @DisplayName("Find by first name should return 2 customers")
     void test() {
         //given
         //when
@@ -30,7 +30,7 @@ public class CustomerRepoTest {
     }
 
     @Test
-    @DisplayName("")
+    @DisplayName("Find all should return 1000 customers")
     void test1() {
         //given
         //when

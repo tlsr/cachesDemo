@@ -4,11 +4,11 @@ import java.util.Optional;
 
 public interface Cache<T> {
 
-    final int CAPACITY = 20;
+    int CAPACITY = 20;
 
     Optional<T> get(String key);
 
-    void put(T value);
+    void put(String key, T value);
 
     void clear();
 

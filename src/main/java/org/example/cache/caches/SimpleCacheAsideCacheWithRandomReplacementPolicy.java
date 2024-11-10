@@ -1,7 +1,9 @@
 package org.example.cache.caches;
 
 import org.example.cache.caches.stats.WithStats;
+import org.example.cache.entities.Customer;
 import org.example.cache.utils.VerifyUtil;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -11,18 +13,19 @@ import java.util.concurrent.ConcurrentHashMap;
 import static org.example.cache.exceptions.ExceptionMessageConstants.CACHE_DOES_NOT_SUPPORT_NULL_KEYS;
 
 @Component
-public class SimpleCacheAsideCacheWithRandomReplacementPolicy<T> implements Cache<T>, WithStats {
+@Qualifier("RandomReplacement")
+public class SimpleCacheAsideCacheWithRandomReplacementPolicy implements Cache<Customer>, WithStats {
 
 
-    private final Map<String, T> storage = new ConcurrentHashMap<>();
+    protected final Map<String, Customer> storage = new ConcurrentHashMap<>();
     private int hitCount = 0;
     private int missCount = 0;
     private int evictionCount = 0;
 
     @Override
-    public Optional<T> get(String email) {
+    public Optional<Customer> get(String email) {
         VerifyUtil.verify(email != null, CACHE_DOES_NOT_SUPPORT_NULL_KEYS);
-        Optional<T> resOpt = Optional.ofNullable(storage.get(email));
+        Optional<Customer> resOpt = Optional.ofNullable(storage.get(email));
         if (resOpt.isPresent()) {
             hitCount++;
         } else {
@@ -32,13 +35,17 @@ public class SimpleCacheAsideCacheWithRandomReplacementPolicy<T> implements Cach
     }
 
     @Override
-    public void put(String key, T value) {
+    public void put(String key, Customer value) {
         VerifyUtil.verify(key != null, CACHE_DOES_NOT_SUPPORT_NULL_KEYS);
         if (getSize() == CAPACITY) {
-            Optional<String> keyOpt = storage.keySet().stream().findAny();
-            keyOpt.ifPresent(this::remove);
+            evict();
         }
         storage.put(key, value);
+    }
+
+    protected void evict() {
+        Optional<String> keyOpt = storage.keySet().stream().findAny();
+        keyOpt.ifPresent(this::remove);
     }
 
     @Override
@@ -51,7 +58,7 @@ public class SimpleCacheAsideCacheWithRandomReplacementPolicy<T> implements Cach
     @Override
     public void remove(String key) {
         VerifyUtil.verify(key != null, CACHE_DOES_NOT_SUPPORT_NULL_KEYS);
-        T removed = storage.remove(key);
+        Customer removed = storage.remove(key);
         if (removed != null) {
             evictionCount++;
         }

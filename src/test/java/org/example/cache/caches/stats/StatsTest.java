@@ -1,6 +1,7 @@
 package org.example.cache.caches.stats;
 
 import org.example.cache.caches.Cache;
+import org.example.cache.entities.Customer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,6 +19,8 @@ class StatsTest {
 
     @Autowired
     private ApplicationContext applicationContext;
+
+    private Customer CUSTOMER = new Customer("firstName", "lastName", "email");
 
 
     static List<WithStats> getAllMyServiceImplementations(ApplicationContext context) {
@@ -59,7 +62,7 @@ class StatsTest {
     @DisplayName("Should increase size by one when item added to cache")
     void test(WithStats cacheWithStats) {
         //given
-        ((Cache) cacheWithStats).put("key", "value");
+        ((Cache) cacheWithStats).put("key", CUSTOMER);
         //when
         int size = cacheWithStats.size();
         //then
@@ -120,7 +123,7 @@ class StatsTest {
     void test6(WithStats cacheWithStats) {
         //given
         Cache cache = ((Cache) cacheWithStats);
-        cache.put("key", "value");
+        cache.put("key", CUSTOMER);
         //when
         cache.get("key");
         int hits = cacheWithStats.hitCount();
@@ -147,7 +150,7 @@ class StatsTest {
     void test8(WithStats cacheWithStats) {
         //given
         Cache cache = ((Cache) cacheWithStats);
-        cache.put("key", "value");
+        cache.put("key", CUSTOMER);
         //when
         for (int i = 0; i < 10; i++) {
             cache.get("key");
@@ -179,7 +182,7 @@ class StatsTest {
     void test10(WithStats cacheWithStats) {
         //given
         Cache cache = ((Cache) cacheWithStats);
-        cache.put("key", "value");
+        cache.put("key", CUSTOMER);
         cache.get("key");
         //when
         double hitRate = cacheWithStats.hitRate();
@@ -206,7 +209,7 @@ class StatsTest {
     void test12(WithStats cacheWithStats) {
         //given
         Cache cache = ((Cache) cacheWithStats);
-        cache.put("key", "value");
+        cache.put("key", CUSTOMER);
         cache.get("key");
         cache.get("key");
         cache.get("key");
@@ -229,7 +232,7 @@ class StatsTest {
     void test13(WithStats cacheWithStats) {
         //given
         Cache cache = ((Cache) cacheWithStats);
-        cache.put("key", "value");
+        cache.put("key", CUSTOMER);
         cache.remove("key");
         //when
         int evictions = cacheWithStats.evictionCount();
@@ -243,7 +246,7 @@ class StatsTest {
     void test14(WithStats cacheWithStats) {
         //given
         Cache cache = ((Cache) cacheWithStats);
-        cache.put("key", "value");
+        cache.put("key", CUSTOMER);
         cache.clear();
         //when
         int evictions = cacheWithStats.evictionCount();
@@ -258,9 +261,9 @@ class StatsTest {
         //given
         Cache cache = ((Cache) cacheWithStats);
         for (int i = 0; i < 20; i++) {
-            cache.put("key" + i, "value");
+            cache.put("key" + i, CUSTOMER);
         }
-        cache.put("key", "value");
+        cache.put("key", CUSTOMER);
         //when
         int evictions = cacheWithStats.evictionCount();
         //then
@@ -274,7 +277,7 @@ class StatsTest {
         //given
         Cache cache = ((Cache) cacheWithStats);
         for (int i = 0; i < 20; i++) {
-            cache.put("key" + i, "value");
+            cache.put("key" + i, CUSTOMER);
         }
         cache.clear();
         //when
@@ -290,11 +293,11 @@ class StatsTest {
         //given
         Cache cache = ((Cache) cacheWithStats);
         for (int i = 0; i < 20; i++) {
-            cache.put("key" + i, "value");
+            cache.put("key" + i, CUSTOMER);
         }
         // overflowing
         for (int i = 0; i < 20; i++) {
-            cache.put("anotherKey" + i, "value");
+            cache.put("anotherKey" + i, CUSTOMER);
         }
         //when
         int evictions = cacheWithStats.evictionCount();

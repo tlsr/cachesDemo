@@ -3,6 +3,7 @@ package org.example.cache.service;
 import org.example.cache.caches.SimpleCacheAsideCacheWithRandomReplacementPolicy;
 import org.example.cache.entities.Customer;
 import org.example.cache.repo.CustomerRepository;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -10,9 +11,9 @@ import java.util.Optional;
 @Service
 public class CustomerService implements ICustomerService {
     private final CustomerRepository repo;
-    private final SimpleCacheAsideCacheWithRandomReplacementPolicy<Customer> cache;
+    private final SimpleCacheAsideCacheWithRandomReplacementPolicy cache;
 
-    public CustomerService(CustomerRepository repo, SimpleCacheAsideCacheWithRandomReplacementPolicy<Customer> cache) {
+    public CustomerService(CustomerRepository repo, @Qualifier("RandomReplacement")SimpleCacheAsideCacheWithRandomReplacementPolicy cache) {
         this.repo = repo;
         this.cache = cache;
     }

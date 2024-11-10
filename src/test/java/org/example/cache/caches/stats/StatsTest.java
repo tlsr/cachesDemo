@@ -20,7 +20,7 @@ class StatsTest {
     @Autowired
     private ApplicationContext applicationContext;
 
-    private Customer CUSTOMER = new Customer("firstName", "lastName", "email");
+    private static final Customer CUSTOMER = new Customer("firstName", "lastName", "email");
 
 
     static List<WithStats> getAllMyServiceImplementations(ApplicationContext context) {
@@ -197,6 +197,17 @@ class StatsTest {
         //given
         Cache cache = ((Cache) cacheWithStats);
         cache.get("key");
+        //when
+        double hitRate = cacheWithStats.hitRate();
+        //then
+        assertEquals(0, hitRate, 0.01);
+    }
+
+    @ParameterizedTest
+    @MethodSource("getAllMyServiceImplementations")
+    @DisplayName("Hit rate should be 0 if zero hits and 0 misses")
+    void test111(WithStats cacheWithStats) {
+        //given
         //when
         double hitRate = cacheWithStats.hitRate();
         //then

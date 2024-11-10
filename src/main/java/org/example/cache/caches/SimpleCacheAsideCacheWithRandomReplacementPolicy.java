@@ -4,6 +4,7 @@ import org.example.cache.caches.stats.WithStats;
 import org.example.cache.entities.Customer;
 import org.example.cache.utils.VerifyUtil;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -14,6 +15,7 @@ import static org.example.cache.exceptions.ExceptionMessageConstants.CACHE_DOES_
 
 @Component
 @Qualifier("RandomReplacement")
+@Scope("prototype")
 public class SimpleCacheAsideCacheWithRandomReplacementPolicy implements Cache<Customer>, WithStats {
 
 
@@ -37,7 +39,7 @@ public class SimpleCacheAsideCacheWithRandomReplacementPolicy implements Cache<C
     @Override
     public void put(String key, Customer value) {
         VerifyUtil.verify(key != null, CACHE_DOES_NOT_SUPPORT_NULL_KEYS);
-        if (getSize() == CAPACITY) {
+        if (getSize() >= CAPACITY) {
             evict();
         }
         storage.put(key, value);
@@ -86,7 +88,12 @@ public class SimpleCacheAsideCacheWithRandomReplacementPolicy implements Cache<C
 
     @Override
     public double hitRate() {
-        return (double) hitCount / (hitCount + missCount);
+        int gets = hitCount + missCount;
+        if (gets == 0) {
+            return 0;
+        } else {
+            return (double) hitCount / (gets);
+        }
     }
 
     @Override

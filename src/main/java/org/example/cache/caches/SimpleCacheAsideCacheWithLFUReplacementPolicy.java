@@ -2,6 +2,7 @@ package org.example.cache.caches;
 
 import org.example.cache.entities.Customer;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -9,8 +10,9 @@ import java.util.Map;
 import java.util.Optional;
 
 @Component
-@Qualifier("LRUReplacement")
-public class SimpleCacheAsideCacheWithLRUReplacementPolicy extends SimpleCacheAsideCacheWithRandomReplacementPolicy {
+@Qualifier("LFUReplacement")
+@Scope("prototype")
+public class SimpleCacheAsideCacheWithLFUReplacementPolicy extends SimpleCacheAsideCacheWithRandomReplacementPolicy {
 
     private Map<String, Integer> accessCounter = new HashMap<>();
 

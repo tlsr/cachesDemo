@@ -10,13 +10,13 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class SimpleCacheAsideCacheWithLRUReplacementPolicyTest {
+class SimpleCacheAsideCacheWithLFUReplacementPolicyTest {
 
     @Test
-    @DisplayName("Should remove Least Recently accessed item when at max capacity")
+    @DisplayName("Should remove Least frequently accessed item when at max capacity")
     void test00() {
         //given
-        Cache<Customer> cache = new SimpleCacheAsideCacheWithLRUReplacementPolicy();
+        Cache<Customer> cache = new SimpleCacheAsideCacheWithLFUReplacementPolicy();
         List<String> keys = KeysProvider.get20Keys();
         for (String key : keys) {
             cache.put(key, new Customer("firstName", "lastName", key));

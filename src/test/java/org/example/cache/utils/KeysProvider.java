@@ -108,4 +108,8 @@ public class KeysProvider {
         return oneHundredEmails.subList(0, 20);
     }
 
+    public static String getKeyThatNotInAList() {
+        return "LashaunBernier157@test.com";
+    }
+
 }

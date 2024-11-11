@@ -21,7 +21,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-class E3CacheAsideExampleWithFIFOReplacementPolicy {
+class E4CacheAsideExampleWithFIFOReplacementPolicy {
 
     @Autowired
     @Qualifier("FIFOReplacement")

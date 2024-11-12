@@ -1,5 +1,6 @@
 package org.example.cache.caches;
 
+import org.example.cache.caches.stats.CacheStats;
 import org.example.cache.caches.stats.WithStats;
 import org.example.cache.entities.Customer;
 import org.example.cache.utils.VerifyUtil;
@@ -20,18 +21,16 @@ public class SimpleCacheAsideCacheWithRandomReplacementPolicy implements Cache<C
 
 
     protected final Map<String, Customer> storage = new ConcurrentHashMap<>();
-    private int hitCount = 0;
-    private int missCount = 0;
-    private int evictionCount = 0;
+    private CacheStats cacheStats = new CacheStats(CAPACITY);
 
     @Override
     public Optional<Customer> get(String email) {
         VerifyUtil.verify(email != null, CACHE_DOES_NOT_SUPPORT_NULL_KEYS);
         Optional<Customer> resOpt = Optional.ofNullable(storage.get(email));
         if (resOpt.isPresent()) {
-            hitCount++;
+            cacheStats.incrementHits();
         } else {
-            missCount++;
+            cacheStats.incrementMisses();
         }
         return resOpt;
     }
@@ -39,9 +38,10 @@ public class SimpleCacheAsideCacheWithRandomReplacementPolicy implements Cache<C
     @Override
     public void put(String key, Customer value) {
         VerifyUtil.verify(key != null, CACHE_DOES_NOT_SUPPORT_NULL_KEYS);
-        if (getSize() >= CAPACITY) {
+        if (storage.size() >= CAPACITY) {
             evict();
         }
+        cacheStats.incrementSize();
         storage.put(key, value);
     }
 
@@ -53,7 +53,10 @@ public class SimpleCacheAsideCacheWithRandomReplacementPolicy implements Cache<C
     @Override
     public void clear() {
         int sizeBeforeClear = storage.size();
-        evictionCount += sizeBeforeClear;
+        for (int i = 0; i < sizeBeforeClear; i++) {
+            cacheStats.incrementEvictions();
+            cacheStats.decrementSize();
+        }
         storage.clear();
     }
 
@@ -62,55 +65,24 @@ public class SimpleCacheAsideCacheWithRandomReplacementPolicy implements Cache<C
         VerifyUtil.verify(key != null, CACHE_DOES_NOT_SUPPORT_NULL_KEYS);
         Customer removed = storage.remove(key);
         if (removed != null) {
-            evictionCount++;
+            cacheStats.decrementSize();
+            cacheStats.incrementEvictions();
         }
     }
 
     @Override
     public int getSize() {
-        return storage.size();
+        assert cacheStats.size() == storage.size();
+        return cacheStats.size();
     }
 
     @Override
-    public int hitCount() {
-        return hitCount;
-    }
-
-    @Override
-    public int missCount() {
-        return missCount;
-    }
-
-    @Override
-    public int evictionCount() {
-        return evictionCount;
-    }
-
-    @Override
-    public double hitRate() {
-        int gets = hitCount + missCount;
-        if (gets == 0) {
-            return 0;
-        } else {
-            return (double) hitCount / (gets);
-        }
-    }
-
-    @Override
-    public int capacity() {
-        return getCapacity();
-    }
-
-    @Override
-    public int size() {
-        return storage.size();
+    public CacheStats getCacheStats() {
+        return this.cacheStats;
     }
 
     @Override
     public void resetStats() {
-        this.hitCount = 0;
-        this.missCount = 0;
-        this.evictionCount = 0;
+        this.cacheStats = new CacheStats(CAPACITY);
     }
-
 }

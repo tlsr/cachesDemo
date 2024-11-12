@@ -31,7 +31,7 @@ public class SimpleCacheAsideCacheWithTTLBasedReplacementPolicy extends SimpleCa
     }
 
     @Override
-    protected void evict() { //
+    protected void evict() {
         List<String> toDelete = idsToTimeStampAdded
             .entrySet()
             .stream()

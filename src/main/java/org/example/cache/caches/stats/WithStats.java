@@ -4,17 +4,36 @@ public interface WithStats {
     String RESET = "\u001B[0m";
     String BLUE = "\u001B[34m";
 
-    int hitCount();
+    CacheStats getCacheStats();
 
-    int missCount();
+    default int hitCount() {
+        return getCacheStats().hits();
+    }
 
-    int evictionCount();
+    default int missCount() {
+        return getCacheStats().misses();
+    }
 
-    double hitRate();
+    default int evictionCount() {
+        return getCacheStats().evictions();
+    }
 
-    int capacity();
+    default double hitRate() {
+        int gets = getCacheStats().hits() + getCacheStats().misses();
+        if (gets == 0) {
+            return 0;
+        } else {
+            return (double) getCacheStats().hits() / (gets);
+        }
+    }
 
-    int size();
+    default int capacity() {
+        return getCacheStats().capacity();
+    }
+
+    default int size() {
+        return getCacheStats().size();
+    }
 
     void resetStats();
 

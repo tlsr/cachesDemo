@@ -1,15 +1,21 @@
 package org.example.cache.caches.stats;
 
 import org.example.cache.caches.Cache;
+import org.example.cache.caches.SimpleCacheAsideCacheWithFIFOReplacementPolicy;
+import org.example.cache.caches.SimpleCacheAsideCacheWithLFUReplacementPolicy;
+import org.example.cache.caches.SimpleCacheAsideCacheWithLRUReplacementPolicy;
+import org.example.cache.caches.SimpleCacheAsideCacheWithMRUReplacementPolicy;
+import org.example.cache.caches.SimpleCacheAsideCacheWithRandomReplacementPolicy;
+import org.example.cache.caches.SimpleCacheAsideCacheWithTTLBasedReplacementPolicy;
 import org.example.cache.entities.Customer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,19 +23,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 class StatsTest {
 
-    @Autowired
-    private ApplicationContext applicationContext;
-
     private static final Customer CUSTOMER = new Customer("firstName", "lastName", "email");
 
 
-    static List<WithStats> getAllMyServiceImplementations(ApplicationContext context) {
-        return context
-            .getBeansOfType(WithStats.class)
-            .values()
-            .stream()
-            .filter(e -> e instanceof Cache<?>)
-            .toList();
+    static List<WithStats> getAllCacheImplsWithoutTTL() {
+        return List.of(new SimpleCacheAsideCacheWithRandomReplacementPolicy(),
+            new SimpleCacheAsideCacheWithFIFOReplacementPolicy(),
+            new SimpleCacheAsideCacheWithLFUReplacementPolicy(),
+            new SimpleCacheAsideCacheWithLRUReplacementPolicy(),
+            new SimpleCacheAsideCacheWithMRUReplacementPolicy());
+    }
+
+    static List<WithStats> getAllCacheImpls() {
+        List<WithStats> res = new ArrayList<>(getAllCacheImplsWithoutTTL());
+        res.add(new SimpleCacheAsideCacheWithTTLBasedReplacementPolicy());
+        return res;
     }
 
     @AfterEach
@@ -47,7 +55,7 @@ class StatsTest {
 
 
     @ParameterizedTest
-    @MethodSource("getAllMyServiceImplementations")
+    @MethodSource("getAllCacheImpls")
     @DisplayName("Should return size 0 on empty cache")
     void test0(WithStats cacheWithStats) {
         //given
@@ -58,7 +66,7 @@ class StatsTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getAllMyServiceImplementations")
+    @MethodSource("getAllCacheImpls")
     @DisplayName("Should increase size by one when item added to cache")
     void test(WithStats cacheWithStats) {
         //given
@@ -70,7 +78,7 @@ class StatsTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getAllMyServiceImplementations")
+    @MethodSource("getAllCacheImpls")
     @DisplayName("WithStats.capacity should be equal Cache.getCapacity")
     void test2(WithStats cacheWithStats) {
         //given
@@ -82,7 +90,7 @@ class StatsTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getAllMyServiceImplementations")
+    @MethodSource("getAllCacheImpls")
     @DisplayName("Hit count should be zero after resetStats")
     void test3(WithStats cacheWithStats) {
         //given
@@ -94,7 +102,7 @@ class StatsTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getAllMyServiceImplementations")
+    @MethodSource("getAllCacheImpls")
     @DisplayName("Miss count should be zero after resetStats")
     void test4(WithStats cacheWithStats) {
         //given
@@ -106,7 +114,7 @@ class StatsTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getAllMyServiceImplementations")
+    @MethodSource("getAllCacheImpls")
     @DisplayName("Eviction count should be zero after resetStats")
     void test5(WithStats cacheWithStats) {
         //given
@@ -118,7 +126,7 @@ class StatsTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getAllMyServiceImplementations")
+    @MethodSource("getAllCacheImpls")
     @DisplayName("Hit count should increase if cache was hit")
     void test6(WithStats cacheWithStats) {
         //given
@@ -132,7 +140,7 @@ class StatsTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getAllMyServiceImplementations")
+    @MethodSource("getAllCacheImpls")
     @DisplayName("Miss count should increase if cache was missed")
     void test7(WithStats cacheWithStats) {
         //given
@@ -145,7 +153,7 @@ class StatsTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getAllMyServiceImplementations")
+    @MethodSource("getAllCacheImpls")
     @DisplayName("Hit count should be 10 if cache was hit 10 times")
     void test8(WithStats cacheWithStats) {
         //given
@@ -161,7 +169,7 @@ class StatsTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getAllMyServiceImplementations")
+    @MethodSource("getAllCacheImpls")
     @DisplayName("Miss count should be 10 if cache was missed 10 times")
     void test9(WithStats cacheWithStats) {
         //given
@@ -177,7 +185,7 @@ class StatsTest {
 
 
     @ParameterizedTest
-    @MethodSource("getAllMyServiceImplementations")
+    @MethodSource("getAllCacheImpls")
     @DisplayName("Hit rate should be 1 if one hit and zero misses")
     void test10(WithStats cacheWithStats) {
         //given
@@ -191,7 +199,7 @@ class StatsTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getAllMyServiceImplementations")
+    @MethodSource("getAllCacheImpls")
     @DisplayName("Hit rate should be 0 if zero hits and 1 miss")
     void test11(WithStats cacheWithStats) {
         //given
@@ -204,7 +212,7 @@ class StatsTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getAllMyServiceImplementations")
+    @MethodSource("getAllCacheImpls")
     @DisplayName("Hit rate should be 0 if zero hits and 0 misses")
     void test111(WithStats cacheWithStats) {
         //given
@@ -215,7 +223,7 @@ class StatsTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getAllMyServiceImplementations")
+    @MethodSource("getAllCacheImpls")
     @DisplayName("Hit rate should be 0.5 if 5 hits and 5 misses")
     void test12(WithStats cacheWithStats) {
         //given
@@ -238,7 +246,7 @@ class StatsTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getAllMyServiceImplementations")
+    @MethodSource("getAllCacheImpls")
     @DisplayName("Eviction should be equal to 1 if one element was removed via remove() call")
     void test13(WithStats cacheWithStats) {
         //given
@@ -252,7 +260,7 @@ class StatsTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getAllMyServiceImplementations")
+    @MethodSource("getAllCacheImpls")
     @DisplayName("Eviction should be equal to 1 if cache contained one element and clear() got called")
     void test14(WithStats cacheWithStats) {
         //given
@@ -266,7 +274,7 @@ class StatsTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getAllMyServiceImplementations")
+    @MethodSource("getAllCacheImplsWithoutTTL")
     @DisplayName("Eviction should be equal to 1 if one element got removed due to cache reaching max capacity")
     void test15(WithStats cacheWithStats) {
         //given
@@ -282,7 +290,7 @@ class StatsTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getAllMyServiceImplementations")
+    @MethodSource("getAllCacheImpls")
     @DisplayName("Eviction should be equal to 20 if cache contained 20 elements and clear() got called")
     void test16(WithStats cacheWithStats) {
         //given
@@ -298,7 +306,7 @@ class StatsTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getAllMyServiceImplementations")
+    @MethodSource("getAllCacheImplsWithoutTTL")
     @DisplayName("Eviction should be equal to 20 if 20 elements were inserted after cache already was at max capacity")
     void test17(WithStats cacheWithStats) {
         //given

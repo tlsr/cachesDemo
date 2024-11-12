@@ -11,6 +11,7 @@ import org.mockito.Mockito;
 import java.util.List;
 import java.util.Optional;
 
+import static org.example.cache.caches.Cache.DEFAULT_CAPACITY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -146,14 +147,14 @@ class GenericCacheTest {
     @DisplayName("Size should not be greater than capacity")
     void test9(Cache<Customer> cache) {
         //given
-        for (int i = 0; i < Cache.CAPACITY; i++) {
+        for (int i = 0; i < cache.getCapacity(); i++) {
             cache.put("Doe" + i + "@test.com", new Customer("John", "Doe", "Doe" + i + "@test.com"));
         }
         Customer customer = new Customer("Mary", "Sue", "Sue@test.com");
         //when
         cache.put("Sue@test.com", customer);
         //then
-        assertEquals(Cache.CAPACITY, cache.getSize());
+        assertEquals(cache.getCapacity(), cache.getSize());
     }
 
     @ParameterizedTest
@@ -161,7 +162,7 @@ class GenericCacheTest {
     @DisplayName("Should add new entry if on max capacity")
     void test10(Cache<Customer> cache) {
         //given
-        for (int i = 0; i < Cache.CAPACITY; i++) {
+        for (int i = 0; i < cache.getCapacity(); i++) {
             cache.put("Doe" + i + "@test.com", new Customer("John", "Doe", "Doe" + i + "@test.com"));
         }
         Customer customer = new Customer("Mary", "Sue", "Sue@test.com");
@@ -173,4 +174,32 @@ class GenericCacheTest {
         assertEquals(customer, fromCache.get());
     }
 
+    @ParameterizedTest
+    @MethodSource("getAllCacheImpls")
+    @DisplayName("Should increase capacity")
+    void test11(Cache<Customer> cache) {
+        //given
+        cache.ensureCapacity(30);
+        //when
+        int capacity = cache.getCapacity();
+        //then
+        assertEquals(30, capacity);
+    }
+
+
+    @ParameterizedTest
+    @MethodSource("getAllCacheImpls")
+    @DisplayName("Should add more than standard capacity if it was increased")
+    void test12(Cache<Customer> cache) {
+        //given
+        cache.ensureCapacity(30);
+        for (int i = 0; i < cache.getCapacity(); i++) {
+            cache.put("Doe" + i + "@test.com", new Customer("John", "Doe", "Doe" + i + "@test.com"));
+        }
+        //when
+        int size = cache.getSize();
+        //then
+        assertTrue(size > DEFAULT_CAPACITY);
+        assertEquals(30, size);
+    }
 }

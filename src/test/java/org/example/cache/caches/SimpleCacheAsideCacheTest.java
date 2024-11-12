@@ -129,14 +129,14 @@ class SimpleCacheAsideCacheTest {
     void test9() {
         //given
         Cache<Customer> cache = new SimpleCacheAsideCacheWithRandomReplacementPolicy();
-        for (int i = 0; i < Cache.CAPACITY; i++) {
+        for (int i = 0; i < cache.getCapacity(); i++) {
             cache.put("Doe" + i + "@test.com", new Customer("John", "Doe", "Doe" + i + "@test.com"));
         }
         Customer customer = new Customer("Mary", "Sue", "Sue@test.com");
         //when
         cache.put("Sue@test.com", customer);
         //then
-        assertEquals(Cache.CAPACITY, cache.getSize());
+        assertEquals(cache.getCapacity(), cache.getSize());
     }
 
     @Test
@@ -144,7 +144,7 @@ class SimpleCacheAsideCacheTest {
     void test10() {
         //given
         Cache<Customer> cache = new SimpleCacheAsideCacheWithRandomReplacementPolicy();
-        for (int i = 0; i < Cache.CAPACITY; i++) {
+        for (int i = 0; i < cache.getCapacity(); i++) {
             cache.put("Doe" + i + "@test.com", new Customer("John", "Doe", "Doe" + i + "@test.com"));
         }
         Customer customer = new Customer("Mary", "Sue", "Sue@test.com");

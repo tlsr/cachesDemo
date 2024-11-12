@@ -38,7 +38,7 @@ public class SimpleCacheAsideCacheWithTTLBasedReplacementPolicy extends SimpleCa
             .filter(entry -> System.currentTimeMillis() - entry.getValue() > TTL_MILLS)
             .map(Map.Entry::getKey)
             .toList();
-        if (toDelete.isEmpty() && storage.size() >= CAPACITY) {
+        if (toDelete.isEmpty() && storage.size() >= getCapacity()) {
             super.evict();
         } else {
             toDelete.forEach(id -> {

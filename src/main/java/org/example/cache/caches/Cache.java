@@ -4,7 +4,7 @@ import java.util.Optional;
 
 public interface Cache<T> {
 
-    int CAPACITY = 20;
+    int DEFAULT_CAPACITY = 20;
 
     Optional<T> get(String key);
 
@@ -15,9 +15,11 @@ public interface Cache<T> {
     void remove(String key);
 
     default int getCapacity() {
-        return CAPACITY;
+        return DEFAULT_CAPACITY;
     }
 
     int getSize();
+
+    void ensureCapacity(int minCapacity);
 
 }

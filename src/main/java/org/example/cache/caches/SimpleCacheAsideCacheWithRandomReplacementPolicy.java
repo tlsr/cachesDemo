@@ -21,7 +21,8 @@ public class SimpleCacheAsideCacheWithRandomReplacementPolicy implements Cache<C
 
 
     protected final Map<String, Customer> storage = new ConcurrentHashMap<>();
-    private CacheStats cacheStats = new CacheStats(CAPACITY);
+    protected int capacity = DEFAULT_CAPACITY;
+    private CacheStats cacheStats = new CacheStats(getCapacity());
 
     @Override
     public Optional<Customer> get(String email) {
@@ -38,7 +39,7 @@ public class SimpleCacheAsideCacheWithRandomReplacementPolicy implements Cache<C
     @Override
     public void put(String key, Customer value) {
         VerifyUtil.verify(key != null, CACHE_DOES_NOT_SUPPORT_NULL_KEYS);
-        if (storage.size() >= CAPACITY) {
+        if (storage.size() >= getCapacity()) {
             evict();
         }
         cacheStats.incrementSize();
@@ -77,12 +78,24 @@ public class SimpleCacheAsideCacheWithRandomReplacementPolicy implements Cache<C
     }
 
     @Override
+    public void ensureCapacity(int minCapacity) {
+        if (getCapacity() < minCapacity) {
+            this.capacity = minCapacity;
+        }
+    }
+
+    @Override
+    public int getCapacity() {
+        return this.capacity;
+    }
+
+    @Override
     public CacheStats getCacheStats() {
         return this.cacheStats;
     }
 
     @Override
     public void resetStats() {
-        this.cacheStats = new CacheStats(CAPACITY);
+        this.cacheStats = new CacheStats(getCapacity());
     }
 }

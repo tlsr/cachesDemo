@@ -7,6 +7,7 @@ import org.example.cache.caches.SimpleCacheAsideCacheWithLRUReplacementPolicy;
 import org.example.cache.caches.SimpleCacheAsideCacheWithMRUReplacementPolicy;
 import org.example.cache.caches.SimpleCacheAsideCacheWithRandomReplacementPolicy;
 import org.example.cache.caches.SimpleCacheAsideCacheWithTTLBasedReplacementPolicy;
+import org.example.cache.caches.WriteBackCache;
 import org.example.cache.caches.WriteThroughCache;
 import org.example.cache.entities.Customer;
 import org.example.cache.repo.CustomerRepository;
@@ -35,7 +36,8 @@ class StatsTest {
             new SimpleCacheAsideCacheWithLFUReplacementPolicy(),
             new SimpleCacheAsideCacheWithLRUReplacementPolicy(),
             new SimpleCacheAsideCacheWithMRUReplacementPolicy(),
-            new WriteThroughCache(repo));
+            new WriteThroughCache(repo),
+            new WriteBackCache(repo));
     }
 
     static List<WithStats> getAllCacheImpls() {

@@ -25,7 +25,8 @@ class GenericCacheTest {
             new SimpleCacheAsideCacheWithLRUReplacementPolicy(),
             new SimpleCacheAsideCacheWithMRUReplacementPolicy(),
             new SimpleCacheAsideCacheWithTTLBasedReplacementPolicy(),
-            new WriteThroughCache(repo));
+            new WriteThroughCache(repo),
+            new WriteBackCache(repo));
     }
 
     @ParameterizedTest

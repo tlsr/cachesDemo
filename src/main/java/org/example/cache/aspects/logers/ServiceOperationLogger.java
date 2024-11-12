@@ -26,11 +26,11 @@ public class ServiceOperationLogger {
 
     @Around("allMethodsPointcut()")
     public Object aroundAll(ProceedingJoinPoint pjp) throws Throwable {
-        if (aspectsLoggersConfig.isRepoLoggingEnabled() && aspectsLoggersConfig.isLogsAroundMethodsEnabled()) {
+        if (aspectsLoggersConfig.isServiceLoggingEnabled() && aspectsLoggersConfig.isLogsAroundMethodsEnabled()) {
             before(pjp);
         }
         Object res = pjp.proceed();
-        if (aspectsLoggersConfig.isRepoLoggingEnabled() && aspectsLoggersConfig.isLogsAroundMethodsEnabled()) {
+        if (aspectsLoggersConfig.isServiceLoggingEnabled() && aspectsLoggersConfig.isLogsAroundMethodsEnabled()) {
             after(pjp);
         }
         return res;

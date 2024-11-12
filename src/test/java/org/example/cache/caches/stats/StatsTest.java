@@ -7,11 +7,14 @@ import org.example.cache.caches.SimpleCacheAsideCacheWithLRUReplacementPolicy;
 import org.example.cache.caches.SimpleCacheAsideCacheWithMRUReplacementPolicy;
 import org.example.cache.caches.SimpleCacheAsideCacheWithRandomReplacementPolicy;
 import org.example.cache.caches.SimpleCacheAsideCacheWithTTLBasedReplacementPolicy;
+import org.example.cache.caches.WriteThroughCache;
 import org.example.cache.entities.Customer;
+import org.example.cache.repo.CustomerRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 
@@ -25,13 +28,14 @@ class StatsTest {
 
     private static final Customer CUSTOMER = new Customer("firstName", "lastName", "email");
 
-
     static List<WithStats> getAllCacheImplsWithoutTTL() {
+        CustomerRepository repo = Mockito.mock(CustomerRepository.class);
         return List.of(new SimpleCacheAsideCacheWithRandomReplacementPolicy(),
             new SimpleCacheAsideCacheWithFIFOReplacementPolicy(),
             new SimpleCacheAsideCacheWithLFUReplacementPolicy(),
             new SimpleCacheAsideCacheWithLRUReplacementPolicy(),
-            new SimpleCacheAsideCacheWithMRUReplacementPolicy());
+            new SimpleCacheAsideCacheWithMRUReplacementPolicy(),
+            new WriteThroughCache(repo));
     }
 
     static List<WithStats> getAllCacheImpls() {

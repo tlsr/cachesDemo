@@ -38,10 +38,14 @@ public class SimpleCacheAsideCacheWithTTLBasedReplacementPolicy extends SimpleCa
             .filter(entry -> System.currentTimeMillis() - entry.getValue() > TTL_MILLS)
             .map(Map.Entry::getKey)
             .toList();
-        toDelete.forEach(id -> {
-            idsToTimeStampAdded.remove(id);
-            remove(id);
-        });
+        if (toDelete.isEmpty() && storage.size() >= CAPACITY) {
+            super.evict();
+        } else {
+            toDelete.forEach(id -> {
+                idsToTimeStampAdded.remove(id);
+                remove(id);
+            });
+        }
     }
 
 }
